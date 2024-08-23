@@ -7,6 +7,7 @@ from asteroidfield import *
 from shoot import *
 
 def main():
+    highscore = 0
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
@@ -18,6 +19,8 @@ def main():
     player = Player(x=SCREEN_WIDTH/2, y=SCREEN_HEIGHT/2, radius=5)
     AsteroidField()
     pygame.init()
+    pygame.font.init()
+    font = pygame.font.SysFont(None, 36)
     print("Starting asteroids!")
     print(f"Screen width: {SCREEN_WIDTH}")
     print(f"Screen height: {SCREEN_HEIGHT}")
@@ -33,9 +36,16 @@ def main():
         for astr in asteroids:
             if astr.collision_check(player):
                 sys.exit("Game over!")
+            for shot in shots:
+                if astr.collision_check(shot):
+                    shot.kill()
+                    highscore += 1
+                    astr.split()
+        highscore_text = font.render(f"Score: {highscore}", True, (255, 255, 255))
         screen.fill("black")
         for drwb in drawable:
             drwb.draw(screen)
+        screen.blit(highscore_text, (10,10))
         pygame.display.flip()
         dt = timer.tick(144) / 1000
     
